@@ -10,8 +10,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"strings"
+	//"os"
+	//"strings"
 	"time"
 )
 
@@ -24,34 +24,34 @@ var (
 	caFile = flag.String("ca", "", "The optional certificate authority file for TLS client authentication")
 	verifySsl = flag.Bool("verify", false, "Optional verify ssl certificates chain")
 )
-
-func main() {
-	flag.Parse()
-
-	if *verbose {
-		sarama.Logger = log.New(os.Stdout, "[sarama] ", log.LstdFlags)
-	}
-
-	if *brokers == "" {
-		flag.PrintDefaults()
-		os.Exit(1)
-	}
-
-	brokerList := strings.Split(*brokers, ",")
-	log.Printf("Kafka brokers: %s", strings.Join(brokerList, ", "))
-
-	server := &Server{
-		DataCollector:     newDataCollector(brokerList),
-		AccessLogProducer: newAccessLogProducer(brokerList),
-	}
-	defer func() {
-		if err := server.Close(); err != nil {
-			log.Println("Failed to close server", err)
-		}
-	}()
-
-	log.Fatal(server.Run(*addr))
-}
+//
+//func main() {
+//	flag.Parse()
+//
+//	if *verbose {
+//		sarama.Logger = log.New(os.Stdout, "[sarama] ", log.LstdFlags)
+//	}
+//
+//	if *brokers == "" {
+//		flag.PrintDefaults()
+//		os.Exit(1)
+//	}
+//
+//	brokerList := strings.Split(*brokers, ",")
+//	log.Printf("Kafka brokers: %s", strings.Join(brokerList, ", "))
+//
+//	server := &Server{
+//		DataCollector:     newDataCollector(brokerList),
+//		AccessLogProducer: newAccessLogProducer(brokerList),
+//	}
+//	defer func() {
+//		if err := server.Close(); err != nil {
+//			log.Println("Failed to close server", err)
+//		}
+//	}()
+//
+//	log.Fatal(server.Run(*addr))
+//}
 
 func createTlsConfiguration() (t *tls.Config) {
 	if *certFile != "" && *keyFile != "" && *caFile != "" {
