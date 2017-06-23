@@ -1,4 +1,4 @@
-package main
+package tcp
 
 import (
 	"bufio"
@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func TcpClient() {
+func DefaultClient() {
 	var address = flag.String("address", "localhost:9000", "server address host:port")
 
 	flag.Parse()

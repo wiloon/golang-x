@@ -1,4 +1,4 @@
-package main
+package tcp
 
 import (
 	"flag"
@@ -8,28 +8,28 @@ import (
 	"os"
 )
 
-func TcpServerEcho() {
-
+func EchoServer() {
 	var address = flag.String("address", "localhost:9000", "server address host:port")
 
 	flag.Parse()
-
-	listener, err := net.Listen("tcp", *address)
+	var l net.Listener
+	var err error
+	l, err = net.Listen("tcp", *address)
 	if err != nil {
 		fmt.Println("Error listening:", err)
 		os.Exit(1)
 	}
-	defer listener.Close()
+	defer l.Close()
 	fmt.Println("Listening on " + *address)
 	for {
-		conn, err := listener.Accept()
+		conn, err := l.Accept()
 		if err != nil {
 			fmt.Println("Error accepting: ", err)
 			os.Exit(1)
 		}
 		//logs an incoming message
 		fmt.Printf("Received message %s -> %s \n", conn.RemoteAddr(), conn.LocalAddr())
-		// Handle connections in a new go routine.
+		// Handle connections in a new goroutine.
 		go handleRequest(conn)
 	}
 }

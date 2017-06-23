@@ -1,4 +1,4 @@
-package main
+package tcp
 
 import (
 	"flag"
@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func TcpServer() {
+func DefaultServer() {
 
 	var address = flag.String("address", "localhost:9000", "server address host:port")
 	flag.Parse()

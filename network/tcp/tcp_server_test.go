@@ -1,11 +1,19 @@
-package main
+package tcp
 
 import "testing"
 
 func TestTcpServer(t *testing.T) {
-	TcpServer()
+	DefaultServer()
 }
 
 func TestTcpServerEcho(t *testing.T) {
-	TcpServerEcho()
+	EchoServer()
+}
+
+func TestTcpClient(t *testing.T) {
+	DefaultClient()
+}
+
+func TestTcpClientEcho(t *testing.T) {
+	EchoClient()
 }
