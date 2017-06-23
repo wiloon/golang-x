@@ -1,26 +1,26 @@
-package demo
+package main
 
 import (
 	"flag"
 	"fmt"
+	"io"
 	"net"
 	"os"
-	"time"
 )
 
-var host = flag.String("host", "", "host")
-var port = flag.String("port", "7000", "port")
+func TcpServerEcho() {
 
-func main() {
+	var address = flag.String("address", "localhost:9000", "server address host:port")
+
 	flag.Parse()
 
-	listener, err := net.Listen("tcp", *host + ":" + *port)
+	listener, err := net.Listen("tcp", *address)
 	if err != nil {
 		fmt.Println("Error listening:", err)
 		os.Exit(1)
 	}
 	defer listener.Close()
-	fmt.Println("Listening on " + *host + ":" + *port)
+	fmt.Println("Listening on " + *address)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -35,16 +35,7 @@ func main() {
 }
 func handleRequest(conn net.Conn) {
 	defer conn.Close()
-	index := 0;
 	for {
-		index = index + 1
-		fmt.Println("loop:", index)
-		//io.Copy(conn, conn)
-		_, err := conn.Write([]byte("xxx xxx"))
-		if err != nil {
-			fmt.Println("Error to send message because of ", err.Error())
-			break
-		}
-		time.Sleep(time.Second)
+		io.Copy(conn, conn)
 	}
 }
