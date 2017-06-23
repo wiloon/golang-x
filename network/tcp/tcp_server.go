@@ -34,7 +34,7 @@ func DefaultServer() {
 		fmt.Printf("Received message %s -> %s \n", conn.RemoteAddr(), conn.LocalAddr())
 		// Handle connections in a new go routine.
 		go readFromClient(conn)
-		//go writeToClient(conn)
+		go writeToClient(conn)
 	}
 }
 func readFromClient(conn net.Conn) {
@@ -44,6 +44,7 @@ func readFromClient(conn net.Conn) {
 		line, isPrefix, err := reader.ReadLine()
 		if err != nil {
 			fmt.Print("Error to read message because of ", err)
+			return
 		} else {
 			fmt.Println("receive:", string(line))
 			fmt.Println("isPrefix:", isPrefix)
@@ -54,10 +55,10 @@ func readFromClient(conn net.Conn) {
 func writeToClient(conn net.Conn) {
 	defer conn.Close()
 	for {
-		_, err := conn.Write([]byte("hello client."))
+		_, err := conn.Write([]byte("hello client.\r\n"))
 		if err != nil {
 			fmt.Println("Error to send message because of ", err.Error())
-
+			return
 		}
 		fmt.Println("sent hello to client.")
 		time.Sleep(time.Second)

@@ -7,7 +7,6 @@ import (
 	"net"
 	"os"
 	"sync"
-	"time"
 )
 
 func DefaultClient() {
@@ -35,16 +34,13 @@ func DefaultClient() {
 func handleWrite(conn net.Conn, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	//var str = "hello " + strconv.Itoa(i) + "\r\n"
-	var str = "hello server."
-
-	_, err := conn.Write([]byte(str))
-	fmt.Println("sent: " + str)
-
-	if err != nil {
-		fmt.Println("Error to send message because of ", err.Error())
+	str := "hello server\r\n"
+	_, e := conn.Write([]byte(str))
+	if e != nil {
+		fmt.Println("Error to send message because of ", e.Error())
+		return
 	}
-
+	fmt.Print("write:" + str)
 }
 
 func handleRead(conn net.Conn, wg *sync.WaitGroup) {
@@ -55,11 +51,10 @@ func handleRead(conn net.Conn, wg *sync.WaitGroup) {
 		line, isPrefix, err := reader.ReadLine()
 		if err != nil {
 			fmt.Print("Error to read message because of ", err)
-			time.Sleep(time.Second)
+			return
 		} else {
 			fmt.Println("receive:", string(line))
 			fmt.Println("isPrefix:", isPrefix)
 		}
-
 	}
 }
