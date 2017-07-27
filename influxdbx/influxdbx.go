@@ -4,30 +4,25 @@ import (
 	"log"
 	"time"
 	"github.com/influxdata/influxdb/client/v2"
+	"wiloon.com/golang-x/config"
 )
 
-const (
-	MyDB = "square_holes"
-	username = "bubba"
-	password = "bumblebeetuna"
-)
-
-
-func main() {
+func InfluxDbX() {
+	influxdbAddress := config.GetString("influxdb.address")
+	databaseName := config.GetString("influxdb.database.name")
 	// Create a new HTTPClient
 	c, err := client.NewHTTPClient(client.HTTPConfig{
-		Addr:     "http://localhost:8086",
-		Username: username,
-		Password: password,
+		Addr: "http://" + influxdbAddress,
+
+
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Create a new point batch
-	bp, err := client.NewBatchPoints(client.BatchPointsConfig{
-		Database:  MyDB,
-		Precision: "s",
+	batchPoints, err := client.NewBatchPoints(client.BatchPointsConfig{
+		Database: databaseName,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -45,10 +40,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	bp.AddPoint(pt)
+	batchPoints.AddPoint(pt)
 
 	// Write the batch
-	if err := c.Write(bp); err != nil {
+	if err := c.Write(batchPoints); err != nil {
 		log.Fatal(err)
 	}
 }
