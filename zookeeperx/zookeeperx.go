@@ -2,12 +2,12 @@ package zookeeperx
 
 import (
 	"github.com/samuel/go-zookeeper/zk"
+	"log"
 	"time"
 	"fmt"
-	"log"
 )
 
-const ROOT_PATH = "/"
+const ROOT_PATH = "/k0"
 
 type ZkNode struct {
 	path  string
@@ -15,34 +15,54 @@ type ZkNode struct {
 }
 
 func (node ZkNode) getChildren(conn *zk.Conn) []ZkNode {
-	children, _, err := conn.Children(node.path)
+	parentPath := node.path
+	log.Println("get children, path", parentPath)
+	children, _, err := conn.Children(parentPath)
 	if err != nil {
 		panic(err)
 	}
+	log.Println("children:", children)
 
-	nodes:=[len(children)]ZkNode
-	for i, v := range children {
-		log.Printf("%v, %v\n", i, v)
-		nodes[i].path=v
+	nodes := []ZkNode{}
+	subChildren := []ZkNode{}
+	if len(children) == 0 {
+		node.getValue(conn)
+		nodes = append(nodes, node)
+	} else {
+
+		for i, v := range children {
+			log.Printf("child %v, %v\n", i, v)
+			node := ZkNode{path: parentPath + "/" + v}
+			subChildren = node.getChildren(conn)
+			nodes = append(nodes, subChildren...)
+		}
 
 	}
+	return nodes
 }
 
-func foo() {
+func (node ZkNode) getValue(conn *zk.Conn) {
+	b, _, _ := conn.Get(node.path)
+	node.value = string(b)
+	log.Println("get value:", node)
+}
+
+func
+foo() {
 	connection, _, _ := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
 	defer connection.Close()
 
 	root := ZkNode{path: ROOT_PATH}
-	root.getChildren()
+	children := root.getChildren(connection)
 
-	children, _, err := connection.Children(ROOT_PATH)
-	if err != nil {
-		panic(err)
+	for i, v := range children {
+		log.Printf("%v,%v\n", i, v)
 	}
 
 }
 
-func GetWithWatch() {
+func
+GetWithWatch() {
 	c, _, err := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
 	defer c.Close()
 
@@ -60,7 +80,8 @@ func GetWithWatch() {
 
 }
 
-func GetChildren() {
+func
+GetChildren() {
 	c, _, err := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
 	defer c.Close()
 
@@ -68,7 +89,7 @@ func GetChildren() {
 		panic(err)
 	}
 
-	children, _, err := c.Children(root)
+	children, _, err := c.Children(ROOT_PATH)
 	if err != nil {
 		panic(err)
 	}
