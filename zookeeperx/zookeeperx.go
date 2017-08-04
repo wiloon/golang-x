@@ -16,7 +16,7 @@ type ZkNode struct {
 
 func (node ZkNode) getChildren(conn *zk.Conn) []ZkNode {
 	parentPath := node.path
-	log.Println("get children, path", parentPath)
+	log.Println("get children, path", node)
 	children, _, err := conn.Children(parentPath)
 	if err != nil {
 		panic(err)
@@ -26,14 +26,16 @@ func (node ZkNode) getChildren(conn *zk.Conn) []ZkNode {
 	nodes := []ZkNode{}
 	subChildren := []ZkNode{}
 	if len(children) == 0 {
-		node.getValue(conn)
+		node.value = node.getValue(conn)
 		nodes = append(nodes, node)
+		log.Println("append node:", node)
 	} else {
 
 		for i, v := range children {
 			log.Printf("child %v, %v\n", i, v)
-			node := ZkNode{path: parentPath + "/" + v}
-			subChildren = node.getChildren(conn)
+			childNode := ZkNode{path: parentPath + "/" + v}
+			log.Println("child node created:", childNode)
+			subChildren = childNode.getChildren(conn)
 			nodes = append(nodes, subChildren...)
 		}
 
@@ -41,14 +43,14 @@ func (node ZkNode) getChildren(conn *zk.Conn) []ZkNode {
 	return nodes
 }
 
-func (node ZkNode) getValue(conn *zk.Conn) {
+func (node ZkNode) getValue(conn *zk.Conn) string {
 	b, _, _ := conn.Get(node.path)
-	node.value = string(b)
-	log.Println("get value:", node)
+	value := string(b)
+	log.Println("get value:", value)
+	return value
 }
 
-func
-foo() {
+func foo() {
 	connection, _, _ := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
 	defer connection.Close()
 
@@ -58,11 +60,9 @@ foo() {
 	for i, v := range children {
 		log.Printf("%v,%v\n", i, v)
 	}
-
 }
 
-func
-GetWithWatch() {
+func GetWithWatch() {
 	c, _, err := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
 	defer c.Close()
 
@@ -80,8 +80,7 @@ GetWithWatch() {
 
 }
 
-func
-GetChildren() {
+func GetChildren() {
 	c, _, err := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
 	defer c.Close()
 
