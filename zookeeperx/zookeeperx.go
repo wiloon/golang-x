@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 	"fmt"
+	"os"
 )
 
 const ROOT_PATH = "/k0"
@@ -14,6 +15,9 @@ type ZkNode struct {
 	value string
 }
 
+func (node ZkNode) toString() string {
+	return node.path + "=" + node.value
+}
 func (node ZkNode) getChildren(conn *zk.Conn) []ZkNode {
 	parentPath := node.path
 	log.Println("get children, path", node)
@@ -57,9 +61,19 @@ func foo() {
 	root := ZkNode{path: ROOT_PATH}
 	children := root.getChildren(connection)
 
+	file, err := os.Create("export.txt")
+	defer file.Close()
+	if err != nil {
+		panic(err)
+	}
 	for i, v := range children {
 		log.Printf("%v,%v\n", i, v)
+		_, err := file.WriteString(v.toString()+"\n")
+		if err != nil {
+			panic(err)
+		}
 	}
+	file.Sync()
 }
 
 func GetWithWatch() {
