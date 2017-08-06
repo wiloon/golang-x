@@ -30,4 +30,3 @@ func Read(path string) string {
 	}
 	return string(chunks)
 }
-
