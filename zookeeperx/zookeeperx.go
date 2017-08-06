@@ -18,6 +18,10 @@ type ZkNode struct {
 	leaf    bool
 }
 
+func (node ZkNode) exist(conn *zk.Conn) bool {
+	exist, _, _ := conn.Exists(node.path)
+	return exist
+}
 func (node ZkNode) isRoot() bool {
 	return strings.LastIndex(node.path, "/") == 0
 }
@@ -60,8 +64,26 @@ func (node ZkNode) Delete(conn *zk.Conn) {
 
 }
 
-func (node ZkNode) createNode(conn *zk.Conn) {
-	conn.Create(node.path, []byte(node.value), 0, zk.WorldACL(zk.PermAll))
+func (node ZkNode) CreateNode(conn *zk.Conn) {
+	log.Println("create node:", node)
+
+	if node.exist(conn) {
+		log.Println("node exist:", node)
+	} else {
+		index := strings.LastIndex(node.path, "/")
+		if index > 0 {
+			parentNode := ZkNode{path: node.path[0:index]}
+			if parentNode.exist(conn) {
+				conn.Create(node.path, []byte(node.value), 0, zk.WorldACL(zk.PermAll))
+			} else {
+				parentNode.CreateNode(conn)
+			}
+
+		} else {
+			conn.Create(node.path, []byte(node.value), 0, zk.WorldACL(zk.PermAll))
+		}
+	}
+
 }
 
 func (node ZkNode) toString() string {
@@ -124,6 +146,7 @@ func Export(path string) {
 
 	root := ZkNode{path: path}
 	children := root.getChildren(connection)
+	GetValue(children)
 
 	file, err := os.Create("export.txt")
 	defer file.Close()
@@ -138,10 +161,11 @@ func Export(path string) {
 			panic(err)
 		}
 	}
+
 	file.Sync()
 }
 
-func importFromFile() {
+func ImportFromFile() {
 
 	connection, _, _ := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
 	defer connection.Close()
@@ -163,9 +187,10 @@ func importFromFile() {
 			break
 		}
 		line := string(n)
+		log.Println("line:", line)
 		arr := strings.Split(line, "=")
 		node := ZkNode{path: arr[0], value: arr[1]}
-		node.createNode(connection)
+		node.CreateNode(connection)
 
 	}
 }
