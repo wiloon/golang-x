@@ -76,7 +76,9 @@ func (node ZkNode) getChildren(conn *zk.Conn) []ZkNode {
 		for i, v := range children {
 			log.Printf("child %v, %v\n", i, v)
 			childNode := ZkNode{path: parentPath + "/" + v}
+			nodes = append(nodes, childNode)
 			log.Println("child found:", childNode)
+
 			subChildren := childNode.getSubChildren(conn)
 			nodes = append(nodes, subChildren...)
 			log.Println("merge sub child:", subChildren)
