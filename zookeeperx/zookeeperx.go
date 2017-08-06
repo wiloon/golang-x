@@ -15,33 +15,48 @@ type ZkNode struct {
 	path    string
 	value   string
 	version int32
+	leaf    bool
 }
 
+func (node ZkNode) isRoot() bool {
+	return strings.LastIndex(node.path, "/") == 0
+}
 func Delete(path string) {
 	connection, _, _ := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
 	defer connection.Close()
 
 	node := ZkNode{path: path}
+	_, node.version = node.getValue(connection)
+
+	children := node.getChildren(connection)
+	GetValue(children)
+
+	for _, v := range children {
+		if !v.hasChildren(connection) {
+			v.Delete(connection)
+		}
+	}
 	node.Delete(connection)
+}
+
+func GetValue(nodes map[string]ZkNode) {
+	log.Println("get value:", nodes)
+	connection, _, _ := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
+	defer connection.Close()
+
+	for k, v := range nodes {
+		v.value, v.version = v.getValue(connection)
+		nodes[k] = v
+	}
 }
 
 func (node ZkNode) Delete(conn *zk.Conn) {
 	log.Println("deleting node:", node)
-	children := node.getChildren(conn)
-
-	if len(children) == 0 {
-		err := conn.Delete(node.path, node.version)
-		if err != nil {
-			panic(err)
-		}
-		log.Printf("node deleted, path:%v,value:%v", node.path, node.value)
-	} else {
-		for _, v := range children {
-			v.Delete(conn)
-
-		}
-
+	err := conn.Delete(node.path, node.version)
+	if err != nil {
+		panic(err)
 	}
+	log.Printf("node deleted, path:%v,value:%v", node.path, node.value)
 
 }
 
@@ -61,7 +76,7 @@ func (node ZkNode) hasChildren(conn *zk.Conn) bool {
 	return !(len(children) == 0)
 }
 
-func (node ZkNode) getChildren(conn *zk.Conn) []ZkNode {
+func (node ZkNode) getChildren(conn *zk.Conn) map[string]ZkNode {
 	parentPath := node.path
 	log.Println("get children, path", node)
 	children, _, err := conn.Children(parentPath)
@@ -70,52 +85,28 @@ func (node ZkNode) getChildren(conn *zk.Conn) []ZkNode {
 	}
 	log.Println("children:", children)
 
-	nodes := []ZkNode{}
+	nodes := map[string]ZkNode{}
 
 	if len(children) > 0 {
 		for i, v := range children {
 			log.Printf("child %v, %v\n", i, v)
 			childNode := ZkNode{path: parentPath + "/" + v}
-			nodes = append(nodes, childNode)
+			nodes[childNode.path] = childNode
 			log.Println("child found:", childNode)
 
-			subChildren := childNode.getSubChildren(conn)
-			nodes = append(nodes, subChildren...)
+			subChildren := childNode.getChildren(conn)
+			for k, v := range subChildren {
+				nodes[k] = v
+			}
 			log.Println("merge sub child:", subChildren)
 		}
 
-	}
-	log.Printf("%v children:%v", parentPath, nodes)
-	return nodes
-}
-
-func (node ZkNode) getSubChildren(conn *zk.Conn) []ZkNode {
-	parentPath := node.path
-	log.Println("get sub children, path", node)
-	children, _, err := conn.Children(parentPath)
-	if err != nil {
-		panic(err)
-	}
-	log.Println("children:", children)
-
-	nodes := []ZkNode{}
-	subChildren := []ZkNode{}
-
-	if len(children) > 0 {
-		for i, v := range children {
-			log.Printf("child %v, %v\n", i, v)
-			childNode := ZkNode{path: parentPath + "/" + v}
-			log.Println("child found:", childNode)
-			subChildren = childNode.getSubChildren(conn)
-			nodes = append(nodes, subChildren...)
-		}
-
-	} else {
-		node.value, node.version = node.getValue(conn)
-		nodes = append(nodes, node)
+	} else if !node.isRoot() {
+		node.leaf = true
+		nodes[node.path] = node
 		log.Println("collect child node:", node)
 	}
-
+	log.Printf("%v children:%v", parentPath, nodes)
 	return nodes
 }
 
@@ -140,8 +131,8 @@ func Export(path string) {
 		panic(err)
 	}
 
-	for i, v := range children {
-		log.Printf("children list: %v,%v\n", i, v)
+	for k, v := range children {
+		log.Printf("children list: key:%v,value:%v\n", k, v)
 		_, err := file.WriteString(v.toString() + "\n")
 		if err != nil {
 			panic(err)
