@@ -30,16 +30,25 @@ func Delete(path string) {
 	defer connection.Close()
 
 	node := ZkNode{path: path}
+
+	if !node.exist(connection) {
+		log.Println("path not exist:", node)
+		return
+	}
 	_, node.version = node.getValue(connection)
 
 	children := node.getChildren(connection)
 	GetValue(children)
 
-	for _, v := range children {
-		if !v.hasChildren(connection) {
-			v.Delete(connection)
+	for len(children) > 0 {
+		for k, v := range children {
+			if !v.hasChildren(connection) {
+				v.Delete(connection)
+				delete(children, k)
+			}
 		}
 	}
+
 	node.Delete(connection)
 }
 
@@ -65,7 +74,7 @@ func (node ZkNode) Delete(conn *zk.Conn) {
 }
 
 func (node ZkNode) CreateNode(conn *zk.Conn) {
-	log.Println("create node:", node)
+	log.Println("creating node:", node)
 
 	if node.exist(conn) {
 		log.Println("node exist:", node)
@@ -73,11 +82,11 @@ func (node ZkNode) CreateNode(conn *zk.Conn) {
 		index := strings.LastIndex(node.path, "/")
 		if index > 0 {
 			parentNode := ZkNode{path: node.path[0:index]}
-			if parentNode.exist(conn) {
-				conn.Create(node.path, []byte(node.value), 0, zk.WorldACL(zk.PermAll))
-			} else {
+			if !parentNode.exist(conn) {
 				parentNode.CreateNode(conn)
 			}
+			conn.Create(node.path, []byte(node.value), 0, zk.WorldACL(zk.PermAll))
+			log.Println("create node:", node)
 
 		} else {
 			conn.Create(node.path, []byte(node.value), 0, zk.WorldACL(zk.PermAll))
@@ -145,6 +154,11 @@ func Export(path string) {
 	defer connection.Close()
 
 	root := ZkNode{path: path}
+	if !root.exist(connection) {
+		log.Println("path not exist:", root)
+		return
+	}
+
 	children := root.getChildren(connection)
 	GetValue(children)
 
@@ -166,11 +180,10 @@ func Export(path string) {
 }
 
 func ImportFromFile() {
-
 	connection, _, _ := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
 	defer connection.Close()
 
-	filePath := "export.txt"
+	filePath := "zk.txt"
 	fi, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
