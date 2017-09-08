@@ -18,6 +18,13 @@ type ZkNode struct {
 	leaf    bool
 }
 
+func (node ZkNode) Update(conn *zk.Conn) {
+	log.Println("update node:", node)
+	_, err := conn.Set(node.path, []byte(node.value), 0)
+	if err != nil {
+		log.Println("failed to update;", err)
+	}
+}
 func (node ZkNode) exist(conn *zk.Conn) bool {
 	exist, _, _ := conn.Exists(node.path)
 	return exist
@@ -77,7 +84,8 @@ func (node ZkNode) CreateNode(conn *zk.Conn) {
 	log.Println("creating node:", node)
 
 	if node.exist(conn) {
-		log.Println("node exist:", node)
+		node.Update(conn)
+		log.Println("node exist,update value:", node)
 	} else {
 		index := strings.LastIndex(node.path, "/")
 		if index > 0 {
@@ -149,20 +157,20 @@ func (node ZkNode) getValue(conn *zk.Conn) (string, int32) {
 	return value, stat.Version
 }
 
-func Export(path string) {
+func Export(root string, exportPath string) {
 	connection, _, _ := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
 	defer connection.Close()
 
-	root := ZkNode{path: path}
-	if !root.exist(connection) {
-		log.Println("path not exist:", root)
+	rootNode := ZkNode{path: root}
+	if !rootNode.exist(connection) {
+		log.Println("path not exist:", rootNode)
 		return
 	}
 
-	children := root.getChildren(connection)
+	children := rootNode.getChildren(connection)
 	GetValue(children)
 
-	file, err := os.Create("export.txt")
+	file, err := os.Create(exportPath)
 	defer file.Close()
 	if err != nil {
 		panic(err)
@@ -179,11 +187,10 @@ func Export(path string) {
 	file.Sync()
 }
 
-func ImportFromFile() {
+func ImportFromFile(filePath string, parentPath string) {
 	connection, _, _ := zk.Connect([]string{"127.0.0.1"}, time.Second) //*10)
 	defer connection.Close()
 
-	filePath := "zk.txt"
 	fi, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
@@ -202,7 +209,9 @@ func ImportFromFile() {
 		line := string(n)
 		log.Println("line:", line)
 		arr := strings.Split(line, "=")
-		node := ZkNode{path: arr[0], value: arr[1]}
+
+		path := parentPath + arr[0]
+		node := ZkNode{path: path, value: arr[1]}
 		node.CreateNode(connection)
 
 	}

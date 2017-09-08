@@ -2,21 +2,16 @@ package zookeeperx
 
 import "testing"
 
-const ROOT_PATH = "/k0"
+const ROOT_PATH = "/platform"
 
-func TestDelete0(t *testing.T) {
-	Delete(ROOT_PATH)
+func TestDelete(t *testing.T) {
+	Delete("/platform/environment/idc.0001/redis/cluster/hosts")
 }
 
-func TestImport(t *testing.T) {
-	ImportFromFile()
+func TestImportWithParent(t *testing.T) {
+	ImportFromFile("/tmp/import.txt", "")
 }
 
 func TestExport(t *testing.T) {
-	Export(ROOT_PATH)
-
-}
-
-func TestDelete1(t *testing.T) {
-	Delete("/k0/k01")
+	Export("/platform/environment/idc.0001/mysql/user-center", "/tmp/local-zk-export.txt")
 }
