@@ -1,15 +1,21 @@
 package main
 
 import (
-"net/http"
+	"net/http"
+	"log"
+	"io/ioutil"
+	"fmt"
 )
 
-func SayHello(w http.ResponseWriter, req *http.Request) {
-w.Write([]byte("Hello"))
+func main() {
+	http.HandleFunc("/foo", SayHello)
+	http.ListenAndServe(":9000", nil)
 }
 
-func main() {
-http.HandleFunc("/hello", SayHello)
-http.ListenAndServe(":8001", nil)
-
+func SayHello(w http.ResponseWriter, req *http.Request) {
+	log.Println(req)
+	w.Write([]byte("{\"Status\":\"SUCCESS\"}"))
+	result, _ := ioutil.ReadAll(req.Body)
+	req.Body.Close()
+	fmt.Printf("%s\n", result)
 }
