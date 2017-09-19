@@ -8,8 +8,9 @@ import (
 )
 
 func main() {
+	log.Println("http mock server start, listen 80")
 	http.HandleFunc("/foo", SayHello)
-	http.ListenAndServe(":9000", nil)
+	http.ListenAndServe(":80", nil)
 }
 
 func SayHello(w http.ResponseWriter, req *http.Request) {
