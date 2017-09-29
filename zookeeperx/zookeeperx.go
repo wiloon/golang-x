@@ -211,7 +211,7 @@ func ImportFromFile(filePath string, parentPath string) {
 		//arr := strings.Split(line, "=")
 		keyIndex := strings.Index(line, "=")
 		path := parentPath + line[0:keyIndex]
-		node := ZkNode{path: path, value: line[keyIndex:]}
+		node := ZkNode{path: path, value: line[keyIndex+1:]}
 		node.CreateNode(connection)
 
 	}

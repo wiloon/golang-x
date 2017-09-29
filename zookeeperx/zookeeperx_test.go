@@ -9,6 +9,7 @@ func TestDelete(t *testing.T) {
 }
 
 func TestImportWithParent(t *testing.T) {
+	Delete("/platform/environment/idc.0001/mysql/user-center")
 	ImportFromFile("/tmp/local-zk-export.txt.bak", "")
 }
 
