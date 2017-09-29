@@ -5,11 +5,11 @@ import "testing"
 const ROOT_PATH = "/platform"
 
 func TestDelete(t *testing.T) {
-	Delete("/platform/environment/idc.0001/redis/cluster/hosts")
+	Delete("/parent/path/to/delete")
 }
 
 func TestImportWithParent(t *testing.T) {
-	ImportFromFile("/tmp/import.txt", "")
+	ImportFromFile("/tmp/local-zk-export.txt.bak", "")
 }
 
 func TestExport(t *testing.T) {

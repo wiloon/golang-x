@@ -19,8 +19,8 @@ type ZkNode struct {
 }
 
 func (node ZkNode) Update(conn *zk.Conn) {
-	log.Println("update node:", node)
-	_, err := conn.Set(node.path, []byte(node.value), 0)
+	log.Printf("update node:%v", node)
+	_, err := conn.Set(node.path, []byte(node.value), node.version+1)
 	if err != nil {
 		log.Println("failed to update;", err)
 	}
@@ -208,10 +208,10 @@ func ImportFromFile(filePath string, parentPath string) {
 		}
 		line := string(n)
 		log.Println("line:", line)
-		arr := strings.Split(line, "=")
-
-		path := parentPath + arr[0]
-		node := ZkNode{path: path, value: arr[1]}
+		//arr := strings.Split(line, "=")
+		keyIndex := strings.Index(line, "=")
+		path := parentPath + line[0:keyIndex]
+		node := ZkNode{path: path, value: line[keyIndex:]}
 		node.CreateNode(connection)
 
 	}
