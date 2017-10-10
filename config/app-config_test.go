@@ -6,5 +6,5 @@ import (
 )
 
 func TestAppConfig(t *testing.T) {
-	fmt.Println(GetString("influxdb.address"))
+	fmt.Println(GetString("k0"))
 }

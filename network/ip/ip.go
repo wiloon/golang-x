@@ -26,7 +26,9 @@ func main() {
 }
 
 func get_external() {
-	resp, err := http.Get("http://members.3322.org/dyndns/getip")
+	url:="http://members.3322.org/dyndns/getip"
+	//url="http://ident.me/"
+	resp, err := http.Get(url)
 	if err != nil {
 		os.Stderr.WriteString(err.Error())
 		os.Stderr.WriteString("\n")
@@ -34,6 +36,8 @@ func get_external() {
 	}
 	defer resp.Body.Close()
 	io.Copy(os.Stdout, resp.Body)
+	log.Println("ip:",resp.Body)
+
 	//os.Exit(0)
 }
 
