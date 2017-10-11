@@ -14,7 +14,7 @@ func main() {
 		"localhost:7003",
 		"localhost:7004",
 		"localhost:7005",
-		"localhost:8086",
+		"localhost:8086", // influxdb
 		"localhost:3306",
 	}
 

@@ -15,6 +15,12 @@ func init() {
 	bidList = list.New()
 }
 
-func Calculate(price float32, timestamp time.Time) {
-	bidList.PushBack(price)
+func Calculate(bid float64, timestamp time.Time) {
+
+	bidList.PushBack(price{bid, timestamp})
+}
+
+type price struct {
+	bid       float64
+	timestamp time.Time
 }
