@@ -1,4 +1,4 @@
-package tcp
+package main
 
 import (
 	"bufio"
@@ -9,12 +9,13 @@ import (
 	"log"
 )
 
-func DefaultClient() {
-	var address = flag.String("address", "localhost:6789", "server address host:port")
+const address = "localhost:9000"
+
+func main() {
 
 	flag.Parse()
 
-	conn, err := net.Dial("tcp4", *address)
+	conn, err := net.Dial("tcp4", address)
 	if err != nil {
 		log.Println("Error connecting:", err)
 		os.Exit(1)
@@ -22,7 +23,7 @@ func DefaultClient() {
 
 	defer conn.Close()
 
-	log.Println("Connecting to " + *address)
+	log.Println("Connecting to " + address)
 
 	var wg sync.WaitGroup
 	wg.Add(2)

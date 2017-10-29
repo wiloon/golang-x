@@ -1,4 +1,4 @@
-package tcp
+package main
 
 import (
 	"flag"
@@ -8,19 +8,20 @@ import (
 	"os"
 )
 
-func EchoServer() {
-	var address = flag.String("address", "localhost:9000", "server address host:port")
+const address = "localhost:7000"
+
+func main() {
 
 	flag.Parse()
 	var l net.Listener
 	var err error
-	l, err = net.Listen("tcp", *address)
+	l, err = net.Listen("tcp4", address)
 	if err != nil {
 		fmt.Println("Error listening:", err)
 		os.Exit(1)
 	}
 	defer l.Close()
-	fmt.Println("Listening on " + *address)
+	fmt.Println("Listening on " + address)
 	for {
 		conn, err := l.Accept()
 		if err != nil {
