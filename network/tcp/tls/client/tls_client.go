@@ -1,18 +1,17 @@
 package main
 
 import (
-	"bufio"
-	"flag"
-	"net"
-	"os"
-	"sync"
 	"log"
+	"crypto/tls"
+	"sync"
+	"net"
+	"bufio"
 	"time"
 	"wiloon.com/golang-x/goroutinex"
+	"flag"
 )
 
 var conn net.Conn
-
 var (
 	serverAddress = flag.String("server", "localhost:7000", "server address")
 	timeout       = flag.Int("timeout", 9999, "timeout(s)")
@@ -20,63 +19,79 @@ var (
 
 func main() {
 	flag.Parse()
-	go startClient()
-	log.Println("timeout:", *timeout)
+	go startTlsClient()
 	time.Sleep(time.Second * time.Duration(*timeout))
 	conn.Close()
 	//os.Exit(1)
 }
+func startTlsClient() {
+	log.SetFlags(log.Lshortfile)
 
-func startClient() {
-	flag.Parse()
-	var err error
-	conn, err = net.Dial("tcp4", *serverAddress)
-	if err != nil {
-		log.Println("Error connecting:", err)
-		os.Exit(1)
+	conf := &tls.Config{
+		InsecureSkipVerify: true,
 	}
 
+	var err error
+	conn, err = tls.Dial("tcp", *serverAddress, conf)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	defer conn.Close()
 
-	log.Println("Connecting to " + *serverAddress)
-
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(1)
 	go handleWrite(conn, &wg)
 	go handleRead(conn, &wg)
 	wg.Wait()
+
+	//n, err := conn.Write([]byte("hello\n"))
+	//if err != nil {
+	//	log.Println(n, err)
+	//	return
+	//}
+	//log.Println("conn write.")
+	//
+	//buf := make([]byte, 100)
+	//n, err = conn.Read(buf)
+	//if err != nil {
+	//	log.Println(n, err)
+	//	return
+	//}
+	//
+	//log.Println("conn read:", string(buf[:n]))
 }
+
 func handleWrite(conn net.Conn, wg *sync.WaitGroup) {
 	defer closeConn(conn, wg)
 
-	for {
+	for i := 0; i < 100; i++ {
 		str := "hello server\r\n"
-		log.Print("writing to server:" + str)
 		_, e := conn.Write([]byte(str))
 		if e != nil {
-			log.Println("failed to send message:", e.Error())
+			log.Println("Error to send message because of ", e.Error())
 			return
 		}
-
+		log.Print("write:" + str)
 		time.Sleep(time.Second * 1)
 	}
-
 }
 
 func handleRead(conn net.Conn, wg *sync.WaitGroup) {
 	defer closeConn(conn, wg)
 	reader := bufio.NewReader(conn)
 	for {
-		log.Println("receiving from server...")
-		line, _, err := reader.ReadLine()
+		log.Println("receiving...")
+		line, isPrefix, err := reader.ReadLine()
 		if err != nil {
-			log.Print("failed to read message:", err)
+			log.Print("Error to read message because of ", err)
 			return
+		} else {
+			log.Println("receive:", string(line))
+			log.Println("isPrefix:", isPrefix)
 		}
-		log.Println("read msg from server:", string(line))
 	}
 }
-
 func closeConn(conn net.Conn, wg *sync.WaitGroup) {
 	log.Printf("gid:%v,closing conn:%v", goroutinex.Goid(), conn)
 	conn.Close()
