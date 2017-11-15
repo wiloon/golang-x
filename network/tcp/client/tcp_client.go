@@ -14,7 +14,7 @@ import (
 var conn net.Conn
 
 var (
-	serverAddress = flag.String("server", "localhost:7000", "server address")
+	serverAddress = flag.String("server", "localhost:3000", "server address")
 	timeout       = flag.Int("timeout", 9999, "timeout(s)")
 )
 
