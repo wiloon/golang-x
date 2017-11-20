@@ -1,4 +1,4 @@
-package metrics
+package main
 
 import (
 	"github.com/rcrowley/go-metrics"
@@ -7,7 +7,14 @@ import (
 	"log"
 )
 
-func Metricsx() {
+func main() {
+	t := metrics.NewTimer()
+	metrics.Register("bang", t)
+	t.Time(func() {})
+	t.Update(47)
+}
+
+func meter() {
 	m := metrics.NewMeter()
 	metrics.Register("quux", m)
 	go metrics.Log(metrics.DefaultRegistry, 5*time.Second, log.New(os.Stderr, "metrics: ", log.Lmicroseconds))
@@ -18,5 +25,4 @@ func Metricsx() {
 		}
 		time.Sleep(time.Second)
 	}
-
 }
