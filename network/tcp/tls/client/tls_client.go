@@ -18,6 +18,7 @@ var (
 )
 
 func main() {
+
 	flag.Parse()
 	go startTlsClient()
 	time.Sleep(time.Second * time.Duration(*timeout))
@@ -37,11 +38,13 @@ func startTlsClient() {
 		log.Println(err)
 		return
 	}
+	connn := conn.(net.Conn)
+	log.Println("log connn:", connn)
 	defer conn.Close()
 
 	var wg sync.WaitGroup
 	wg.Add(1)
-	go handleWrite(conn, &wg)
+	go handleWrite(connn, &wg)
 	go handleRead(conn, &wg)
 	wg.Wait()
 

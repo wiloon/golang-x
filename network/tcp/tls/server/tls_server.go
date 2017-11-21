@@ -9,7 +9,7 @@ import (
 
 func main() {
 	log.SetFlags(log.Lshortfile)
-	crt := "/home/roy/tmp/server.crt"
+	crt := "/home/roy/tmp/server.cer"
 	//crt = "cert.pem"
 	key := "/home/roy/tmp/server.key"
 	//key = "key.pem"
@@ -21,7 +21,7 @@ func main() {
 	}
 
 	config := &tls.Config{Certificates: []tls.Certificate{cer}}
-	ln, err := tls.Listen("tcp", ":8443", config)
+	ln, err := tls.Listen("tcp", ":7000", config)
 	if err != nil {
 		log.Println(err)
 		return
