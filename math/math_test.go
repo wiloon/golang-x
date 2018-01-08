@@ -13,5 +13,9 @@ func TestCalculate(t *testing.T) {
 	Calculate(1.1236, time.Now())
 	time.Sleep(1 * time.Second)
 	Calculate(1.1237, time.Now())
+	time.Sleep(1 * time.Second)
+	Calculate(1.1239, time.Now())
+	time.Sleep(1 * time.Second)
+	Calculate(1.1242, time.Now())
 
 }
