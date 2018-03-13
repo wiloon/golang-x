@@ -1,4 +1,4 @@
-package file
+package main
 
 import (
 	"bufio"
@@ -7,6 +7,26 @@ import (
 	"os"
 	"io"
 )
+
+func main() {
+	err := os.MkdirAll("com/utils", 0777)
+	if err != nil {
+		fmt.Printf("%s", err)
+	} else {
+		fmt.Print("Create Directory OK!")
+	}
+
+	fn := "com/utils/ak_decrypt_dependency.txt"
+	//fn="ak_decrypt_dependency.txt"
+	s := []byte("Hello World!")
+	err=ioutil.WriteFile(fn, s, os.ModeAppend)
+	if err!=nil{
+		fmt.Println(err)
+	}
+	rf, _ := ioutil.ReadFile(fn)
+	fmt.Printf("%s", rf)
+	// Hello World!
+}
 
 func check(e error) {
 	if e != nil {

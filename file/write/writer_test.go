@@ -1,4 +1,4 @@
-package file
+package main
 
 import "testing"
 

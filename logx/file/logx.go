@@ -1,4 +1,4 @@
-package logx
+package file
 
 import (
 	"os"
