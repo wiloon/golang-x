@@ -119,7 +119,8 @@ func (c *greeterClient) SayHello(ctx context.Context, in *HelloRequest, opts ...
 
 // Server API for Greeter service
 
-type GreeterServer interface {
+type GreeterServr interface {
+
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
 }
 
