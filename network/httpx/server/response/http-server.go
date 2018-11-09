@@ -17,9 +17,9 @@ func main() {
 
 func SayHello(w http.ResponseWriter, req *http.Request) {
 	log.Println(req)
-	w.Header().Add("Access-Control-Allow-Origin", "http://localhost:4200")
-	w.Write([]byte(""))
+	w.Header().Add("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Write([]byte("{\"Status\":\"SUCCESS\"}"))
 	result, _ := ioutil.ReadAll(req.Body)
 	req.Body.Close()
-	fmt.Printf("req body: %s\n", result)
+	fmt.Printf("%s\n", result)
 }

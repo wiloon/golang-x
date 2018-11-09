@@ -1,4 +1,4 @@
-package goroutinex
+package main
 
 import (
 	"runtime"
@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"log"
 	"fmt"
+	"sync"
 )
 
 func Goid() int {
@@ -23,4 +24,18 @@ func Goid() int {
 		panic(fmt.Sprintf("cannot get goroutine id: %v", err))
 	}
 	return id
+}
+
+func main() {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		log.Println(Goid())
+	}()
+	go func() {
+		log.Println(Goid())
+	}()
+	log.Println(Goid())
+
+	wg.Wait()
 }
