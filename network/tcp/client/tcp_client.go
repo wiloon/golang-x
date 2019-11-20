@@ -3,10 +3,10 @@ package main
 import (
 	"bufio"
 	"flag"
+	"log"
 	"net"
 	"os"
 	"sync"
-	"log"
 	"time"
 	"wiloon.com/golang-x/goroutinex"
 )
