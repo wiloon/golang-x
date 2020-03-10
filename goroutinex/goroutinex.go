@@ -1,11 +1,11 @@
-package main
+package goroutinex
 
 import (
-	"runtime"
-	"strings"
-	"strconv"
-	"log"
 	"fmt"
+	"log"
+	"runtime"
+	"strconv"
+	"strings"
 	"sync"
 )
 

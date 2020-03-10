@@ -1,9 +1,9 @@
 package config
 
 import (
-	"wiloon.com/golang-x/config/system"
-	"log"
 	"github.com/go-akka/configuration"
+	"golang-x/config/system"
+	"log"
 	"path/filepath"
 )
 
@@ -21,7 +21,7 @@ func GetString(key string) string {
 	log.Println("app config full path:", fullPath)
 
 	conf := configuration.LoadConfig(fullPath)
-	value := conf.GetString(key);
+	value := conf.GetString(key)
 	log.Printf("key:%s, value:%s", key, value)
 	return value
 

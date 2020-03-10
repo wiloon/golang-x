@@ -1,14 +1,14 @@
 package main
 
 import (
-	"log"
-	"crypto/tls"
-	"sync"
-	"net"
 	"bufio"
-	"time"
-	"wiloon.com/golang-x/goroutinex"
+	"crypto/tls"
 	"flag"
+	"golang-x/goroutinex"
+	"log"
+	"net"
+	"sync"
+	"time"
 )
 
 var conn net.Conn

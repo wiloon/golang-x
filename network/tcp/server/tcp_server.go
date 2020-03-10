@@ -1,15 +1,15 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"golang-x/goroutinex"
+	"log"
 	"net"
 	"os"
-	"log"
-	"bufio"
-	"time"
 	"sync"
-	"wiloon.com/golang-x/goroutinex"
+	"time"
 )
 
 var connections []net.Conn
@@ -36,7 +36,7 @@ func startServer() {
 	flag.Parse()
 
 	var err error
-	listener, err = net.Listen("tcp4", ":" + *port)
+	listener, err = net.Listen("tcp4", ":"+*port)
 	if err != nil {
 		fmt.Println("Error listening:", err)
 		os.Exit(1)

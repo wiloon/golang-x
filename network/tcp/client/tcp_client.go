@@ -3,12 +3,12 @@ package main
 import (
 	"bufio"
 	"flag"
+	"golang-x/goroutinex"
+	"log"
 	"net"
 	"os"
 	"sync"
-	"log"
 	"time"
-	"wiloon.com/golang-x/goroutinex"
 )
 
 var conn net.Conn
