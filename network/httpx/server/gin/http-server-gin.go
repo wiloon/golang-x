@@ -1,6 +1,9 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"log"
+)
 
 func main() {
 	r := gin.Default()
@@ -14,6 +17,7 @@ func main() {
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
+		log.Println("pong.")
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
