@@ -3,6 +3,7 @@ module golang-x
 go 1.12
 
 require (
+	github.com/Jeffail/tunny v0.0.0-20190930221602-f13eb662a36a
 	github.com/Shopify/sarama v1.26.2-0.20200219230609-4ee86d9c4d49
 	github.com/bradfitz/gomemcache v0.0.0-20190329173943-551aad21a668
 	github.com/cihub/seelog v0.0.0-20170130134532-f561c5e57575
@@ -10,6 +11,9 @@ require (
 	github.com/coreos/bbolt v1.3.3
 	github.com/drone/routes v0.0.0-20130816182705-853bef2b2311
 	github.com/fogleman/gg v1.3.0
+	github.com/gin-contrib/cors v1.3.1
+	github.com/gin-contrib/size v0.0.0-20200226145816-24aa35f64b9f
+	github.com/gin-contrib/zap v0.0.1
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-akka/configuration v0.0.0-20190712021255-16baaebe39b5
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
@@ -17,6 +21,9 @@ require (
 	github.com/gotk3/gotk3 v0.0.0-20190831133442-e289f56e4d6b
 	github.com/influxdata/influxdb v1.7.8
 	github.com/klauspost/compress v1.10.1 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20190826022208-cac0b30c2563
 	github.com/robfig/cron v1.2.0
 	github.com/samuel/go-zookeeper v0.0.0-20190810000440-0ceca61e4d75
@@ -27,6 +34,7 @@ require (
 	github.com/sqs/gojs v0.0.0-20170522041006-12d0b3282819
 	github.com/urfave/negroni v1.0.0
 	go.etcd.io/bbolt v1.3.3 // indirect
+	go.uber.org/zap v1.10.0
 	golang.org/x/crypto v0.0.0-20200220183623-bac4c82f6975 // indirect
 	golang.org/x/image v0.0.0-20190902063713-cb417be4ba39 // indirect
 	golang.org/x/net v0.0.0-20200219183655-46282727080f
