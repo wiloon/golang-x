@@ -9,7 +9,7 @@ import (
 func main() {
 	go func() {
 		for {
-			log.Println(Add("https://github.com/EDDYCJY"))
+			log.Println(Add("https://github.com/foo"))
 		}
 	}()
 
