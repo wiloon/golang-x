@@ -31,7 +31,7 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/sourcegraph/go-webkit2 v0.0.0-20170811231113-ade305cf91f4
 	github.com/sqs/gojs v0.0.0-20170522041006-12d0b3282819
-	github.com/urfave/negroni v1.0.0
+	github.com/veandco/go-sdl2 v0.4.4
 	go.etcd.io/bbolt v1.3.3 // indirect
 	go.uber.org/zap v1.10.0
 	golang.org/x/crypto v0.0.0-20200220183623-bac4c82f6975 // indirect

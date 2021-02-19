@@ -44,8 +44,8 @@ func main() {
 	router.POST("/post", func(c *gin.Context) {
 		id := c.Query("id")
 		page := c.DefaultQuery("page", "0")
-		name := c.PostForm("name")
-		message := c.PostForm("message")
+		name := c.PostForm("code")
+		message := c.PostForm("state")
 		fmt.Println(fmt.Sprintf("id: %v, page: %v, name: %v, msg: %v", id, page, name, message))
 		if len(c.Errors) > 0 {
 			fmt.Printf("errors: %v", c.Errors)

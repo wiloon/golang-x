@@ -23,8 +23,9 @@ func (u *MyUser) MarshalJSON() ([]byte, error) {
 	})
 }
 
+type Alias0 MyUser
 type AnotherUser struct {
-	MyUser
+	Alias0
 	Foo string `json:"foo"`
 }
 
