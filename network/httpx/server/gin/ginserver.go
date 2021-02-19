@@ -20,6 +20,12 @@ func main() {
 		})
 	})
 
+	router.GET("/Services/Service.svc/GetCsCode", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+
 	router.POST("/ping", func(c *gin.Context) {
 		wi := &wechatInvoke{}
 		if c.BindJSON(wi) == nil {
@@ -49,6 +55,5 @@ func main() {
 			"jwt_token": "jwt_token0",
 		})
 	})
-
-	router.Run(":8081") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	router.Run(":8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
