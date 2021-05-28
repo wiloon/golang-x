@@ -1,14 +1,14 @@
 package basic
 
 import (
-	"fmt"
 	"flag"
+	"fmt"
 )
 
-func Fmtx(){
+func Fmtx() {
 	qps := flag.Int("qps", 1, "qps")
 
-	fmt.Printf("foo:%s\n","bar");
+	fmt.Printf("foo:%s\n", "bar")
 
-	fmt.Printf("foo:%s\n",*qps);
+	fmt.Printf("foo:%v\n", *qps)
 }
